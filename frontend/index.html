@@ -1,0 +1,494 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TradeSphere | Virtual Stock Trading</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+<div id="toast" class="toast"></div>
+
+<!-- =========================
+     AUTHENTICATION
+     ========================= -->
+
+<section id="authView" class="auth-page">
+
+  <div class="auth-card">
+
+    <div class="brand large">TradeSphere</div>
+
+    <p class="muted">
+      Virtual Stock Trading Platform
+    </p>
+
+    <div class="tabs">
+
+      <button
+        id="loginTab"
+        class="tab active"
+        onclick="showAuth('login')">
+        Login
+      </button>
+
+      <button
+        id="registerTab"
+        class="tab"
+        onclick="showAuth('register')">
+        Register
+      </button>
+
+    </div>
+
+    <!-- Login -->
+
+    <form id="loginForm">
+
+      <label>Email</label>
+
+      <input
+        id="loginEmail"
+        type="email"
+        required>
+
+      <label>Password</label>
+
+      <input
+        id="loginPassword"
+        type="password"
+        required>
+
+      <button
+        class="primary full"
+        type="submit">
+        Login
+      </button>
+
+    </form>
+
+    <!-- Register -->
+
+    <form
+      id="registerForm"
+      class="hidden">
+
+      <label>Name</label>
+
+      <input
+        id="registerName"
+        required>
+
+      <label>Email</label>
+
+      <input
+        id="registerEmail"
+        type="email"
+        required>
+
+      <label>Password</label>
+
+      <input
+        id="registerPassword"
+        type="password"
+        minlength="6"
+        required>
+
+      <button
+        class="primary full"
+        type="submit">
+        Create Account
+      </button>
+
+    </form>
+
+  </div>
+
+</section>
+
+
+<!-- =========================
+     MAIN APPLICATION
+     ========================= -->
+
+<section
+  id="appView"
+  class="hidden">
+
+  <!-- TOP BAR -->
+
+  <header class="topbar">
+
+    <div class="brand">
+      TradeSphere
+    </div>
+
+    <nav>
+
+      <button
+        class="nav-btn active"
+        data-page="dashboard">
+        Dashboard
+      </button>
+
+      <button
+        class="nav-btn"
+        data-page="portfolio">
+        Portfolio
+      </button>
+
+      <button
+        class="nav-btn"
+        data-page="transactions">
+        Transactions
+      </button>
+
+      <button
+        class="nav-btn"
+        data-page="watchlist">
+        Watchlist
+      </button>
+
+    </nav>
+
+    <div class="user-area">
+
+      <span id="userName"></span>
+
+      <button
+        id="logoutBtn"
+        class="logout">
+        Logout
+      </button>
+
+    </div>
+
+  </header>
+
+
+  <!-- MAIN CONTENT -->
+
+  <main class="container">
+
+
+    <!-- =========================
+         DASHBOARD
+         ========================= -->
+
+    <div
+      id="dashboardPage"
+      class="page">
+
+      <!-- Heading -->
+
+      <div class="page-heading">
+
+        <div>
+
+          <h1>
+            Market Dashboard
+          </h1>
+
+          <p class="muted">
+            Practice trading with virtual money.
+          </p>
+
+        </div>
+
+
+        <!-- Search -->
+
+        <div class="search-box">
+
+          <input
+            id="symbolSearch"
+            placeholder="Enter symbol e.g. AAPL">
+
+          <button
+            onclick="searchQuote()">
+            Search
+          </button>
+
+        </div>
+
+      </div>
+
+
+      <!-- Account Statistics -->
+
+      <div class="cards">
+
+        <div class="stat-card">
+
+          <span>
+            Available Cash
+          </span>
+
+          <strong id="cashBalance">
+            ₹0.00
+          </strong>
+
+        </div>
+
+
+        <div class="stat-card">
+
+          <span>
+            Portfolio Value
+          </span>
+
+          <strong id="portfolioValue">
+            ₹0.00
+          </strong>
+
+        </div>
+
+
+        <div class="stat-card">
+
+          <span>
+            Invested
+          </span>
+
+          <strong id="investedValue">
+            ₹0.00
+          </strong>
+
+        </div>
+
+
+        <div class="stat-card">
+
+          <span>
+            Profit / Loss
+          </span>
+
+          <strong id="pnlValue">
+            ₹0.00
+          </strong>
+
+        </div>
+
+      </div>
+
+
+      <!-- Selected Stock -->
+
+      <div
+        id="quotePanel"
+        class="quote-panel hidden">
+
+        <div>
+
+          <span class="eyebrow">
+            Selected Stock
+          </span>
+
+          <h2 id="quoteSymbol">
+            --
+          </h2>
+
+          <p
+            id="quoteName"
+            class="muted">
+            --
+          </p>
+
+        </div>
+
+
+        <div class="quote-price">
+
+          <strong id="quotePrice">
+            ₹0
+          </strong>
+
+          <span id="quoteChange">
+            --
+          </span>
+
+        </div>
+
+
+        <div class="trade-controls">
+
+          <input
+            id="tradeQuantity"
+            type="number"
+            min="0.0001"
+            step="0.0001"
+            value="1">
+
+          <button
+            class="buy"
+            onclick="trade('buy')">
+            Buy
+          </button>
+
+          <button
+            class="sell"
+            onclick="trade('sell')">
+            Sell
+          </button>
+
+          <button
+            class="secondary"
+            onclick="addWatchlist()">
+            ★ Watch
+          </button>
+
+        </div>
+
+      </div>
+
+
+      <!-- Current Holdings -->
+
+      <div class="section">
+
+        <div class="section-title">
+
+          <h2>
+            Current Holdings
+          </h2>
+
+          <button
+            class="secondary"
+            onclick="loadAll()">
+            Refresh
+          </button>
+
+        </div>
+
+        <div
+          id="holdingsTable"
+          class="table-wrap">
+        </div>
+
+      </div>
+
+
+      <!-- =========================
+           POPULAR STOCKS
+           ========================= -->
+
+      <div class="section popular-stocks-section">
+
+        <div id="popularStocks"></div>
+
+      </div>
+
+    </div>
+
+
+    <!-- =========================
+         PORTFOLIO
+         ========================= -->
+
+    <div
+      id="portfolioPage"
+      class="page hidden">
+
+      <div class="page-heading">
+
+        <div>
+
+          <h1>
+            Portfolio
+          </h1>
+
+          <p class="muted">
+            Your virtual investments and performance.
+          </p>
+
+        </div>
+
+      </div>
+
+      <div
+        id="portfolioTable"
+        class="table-wrap">
+      </div>
+
+    </div>
+
+
+    <!-- =========================
+         TRANSACTIONS
+         ========================= -->
+
+    <div
+      id="transactionsPage"
+      class="page hidden">
+
+      <div class="page-heading">
+
+        <div>
+
+          <h1>
+            Transactions
+          </h1>
+
+          <p class="muted">
+            Complete trading history.
+          </p>
+
+        </div>
+
+      </div>
+
+      <div
+        id="transactionsTable"
+        class="table-wrap">
+      </div>
+
+    </div>
+
+
+    <!-- =========================
+         WATCHLIST
+         ========================= -->
+
+    <div
+      id="watchlistPage"
+      class="page hidden">
+
+      <div class="page-heading">
+
+        <div>
+
+          <h1>
+            Watchlist
+          </h1>
+
+          <p class="muted">
+            Stocks you want to monitor.
+          </p>
+
+        </div>
+
+      </div>
+
+      <div
+        id="watchlistTable"
+        class="table-wrap">
+      </div>
+
+    </div>
+
+  </main>
+
+</section>
+
+
+<!-- JAVASCRIPT -->
+
+<script src="js/api.js"></script>
+<script src="js/app.js"></script>
+
+</body>
+</html>
+```
